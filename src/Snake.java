@@ -22,6 +22,7 @@ public class Snake {
             //Parse apple line
             String[] apple = line.split("\\s+");
             int appleX = Integer.parseInt(apple[0]), appleY = Integer.parseInt(apple[1]);
+            Coord applePos = new Coord(appleX, appleY);
 
             //Parse me line
             int me = Integer.parseInt(in.readLine().trim());
@@ -39,12 +40,13 @@ public class Snake {
                 }
             }
 
+            Board board = new Board(width, height, applePos, ourSnake, otherSnakes);
+
             //TODO: select move
+            Move move = Move.STRAIGHT; //TODO
 
             //Output
-            // 0 up, 1 down, 2 left, 3 right; 4 left, 5 straight, 6 right.
-            System.out.println("0"); //TODO
-            System.out.flush();
+            move.print();
         }
     }
 }

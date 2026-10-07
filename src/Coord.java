@@ -17,4 +17,13 @@ public class Coord {
         this.x = x;
         this.y = y;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        if (getClass() != o.getClass()) return false;
+        Coord other = (Coord)o;
+        return this.x == other.x && this.y == other.y;
+    }
 }
