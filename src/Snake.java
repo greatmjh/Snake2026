@@ -26,9 +26,18 @@ public class Snake {
             //Parse me line
             int me = Integer.parseInt(in.readLine().trim());
 
-            //Load snakes -- TODO: parse into GameSnake class
-            String[] snakes = new String[snakeCount];
-            for (int i = 0; i < snakeCount; i++) snakes[i] = in.readLine();
+            //Load snakes
+            GameSnake ourSnake = null;
+            GameSnake[] otherSnakes = new GameSnake[snakeCount - 1];
+            int j = 0;
+            for (int i = 0; i < snakeCount; i++) {
+                if (i == me) {
+                    ourSnake = new GameSnake(in.readLine());
+                } else {
+                    otherSnakes[j] = new GameSnake(in.readLine());
+                    j++;
+                }
+            }
 
             //TODO: select move
 
