@@ -42,8 +42,7 @@ public class Snake {
 
             Board board = new Board(width, height, applePos, ourSnake, otherSnakes);
 
-            //TODO: select move
-            Move move = Move.STRAIGHT; //TODO
+            Move move = Strategies.naive(board, ourSnake.getHeadPos(), applePos);
 
             //Output
             move.print();

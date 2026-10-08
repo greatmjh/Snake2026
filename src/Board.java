@@ -1,6 +1,6 @@
 public class Board {
     public final int width, height;
-    public Cell[][] cells;
+    private Cell[][] cells;
 
     //Basic initialiser
     public Board(int width, int height) {
@@ -36,11 +36,13 @@ public class Board {
     }
 
     public Cell getCell(Coord c) {
-        return cells[c.x][c.y];
+        Coord cw = wrap(c);
+        return cells[cw.x][cw.y];
     }
 
     public void setCell(Coord c, Cell toSet) {
-        cells[c.x][c.y] = toSet;
+        Coord cw = wrap(c);
+        cells[cw.x][cw.y] = toSet;
     }
 
     public void print() {
@@ -50,6 +52,26 @@ public class Board {
             }
             System.out.println();
         }
+    }
+
+    private Coord wrap(Coord c) {
+        Coord result = new Coord(c.x, c.y);
+        if (result.x >= 0) {
+            result.x %= (width - 1);
+            if (result.x >= width) System.err.println("61");
+        } else {
+            result.x = width - ((-result.x) % (width - 1)) - 1;
+            if (result.x >= width) System.err.println("64");
+        }
+        if (result.y >= 0) {
+            result.y %= (height - 1);
+            if (result.y >= height) System.err.println("68");
+        } else {
+            result.y = height - ((-result.y) % (height - 1)) - 1;
+            if (result.y >= height) System.err.println("71");
+
+        }
+        return result;
     }
 
     void drawLine(Coord start, Coord end, Cell cellType) {
