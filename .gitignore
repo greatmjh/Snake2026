@@ -34,3 +34,5 @@ bin/
 /snake-platform/.build/my-snake/*
 /snake-platform/my-snake/*
 /snake-platform/replays/*
+*.err
+*.log
