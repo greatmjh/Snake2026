@@ -26,4 +26,9 @@ public class Coord {
         Coord other = (Coord)o;
         return this.x == other.x && this.y == other.y;
     }
+
+    @Override
+    public String toString() {
+        return String.format("(%s,%s)", x, y);
+    }
 }
