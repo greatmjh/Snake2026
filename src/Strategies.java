@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.PriorityQueue;
 
 public class Strategies {
-    public static Move aStar(Board board, Coord headPos, Coord applePos) {
+    public static Move aStar(Board board, Coord headPos, Coord applePos, GameSnake[] otherSnakes) {
 
         //working queue
         PriorityQueue<AstarEntry> pq = new PriorityQueue<>();
@@ -33,7 +33,7 @@ public class Strategies {
 
             ArrayList<Coord> adjacencies = board.safeMovesFrom(head.location());
             for (Coord c : adjacencies) {
-                int risk = 1; //TODO
+                int risk = calculateRisk(c, otherSnakes, board);
                 int dist = board.distBetween(c, applePos);
                 AstarEntry newEntry = new AstarEntry(c, head, head.cumulativeCost() + risk, dist);
                 if (newEntry.location().equals(applePos)) { //found apple, we are done
@@ -68,5 +68,21 @@ public class Strategies {
             return Move.STRAIGHT;
         }
 
+    }
+
+    static int calculateRisk(Coord c, GameSnake[] otherSnakes, Board board) {
+        //find distance to closest snake
+        int closestSnakeDist = Integer.MAX_VALUE;
+        for (GameSnake s: otherSnakes) {
+            Coord headPos = s.getHeadPos();
+            int dist = board.distBetween(c, headPos);
+            if (dist < closestSnakeDist) closestSnakeDist = dist;
+        }
+
+        final int RADIUS = 5;
+
+        int risk = RADIUS - closestSnakeDist;
+        if (risk < 1) risk = 1;
+        return risk;
     }
 }

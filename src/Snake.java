@@ -42,7 +42,7 @@ public class Snake {
 
             Board board = new Board(width, height, applePos, ourSnake, otherSnakes);
 
-            Move move = Strategies.aStar(board, ourSnake.getHeadPos(), applePos);
+            Move move = Strategies.aStar(board, ourSnake.getHeadPos(), applePos, otherSnakes);
 
             //Output
             move.print();
