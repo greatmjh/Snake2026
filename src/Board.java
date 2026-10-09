@@ -54,6 +54,12 @@ public class Board {
         }
     }
 
+    public int distBetween(Coord a, Coord b) {
+        int Xdist = shortestWrapDistance(a.x, b.x, width);
+        int Ydist = shortestWrapDistance(a.y, b.y, height);
+        return Xdist + Ydist; //manhattan distance
+    }
+
     private Coord wrap(Coord c) {
         Coord result = new Coord(c.x, c.y);
         if (result.x >= 0) {
@@ -98,6 +104,16 @@ public class Board {
 
         //Mark the head
         cells[snake.getHeadPos().x][snake.getHeadPos().y] = new Cell.SnakeCell(isUs, true);
+    }
+
+    static int shortestWrapDistance(int a, int b, int k) {
+        int directDist = Math.abs(a - b);
+        //wrap through the right side of the line
+        int rightWrap = Math.abs(a - (b + k));
+        //wrap through left side of the line
+        int leftWrap = Math.abs(a - (k - b));
+
+        return Math.min(Math.min(directDist, rightWrap), leftWrap);
     }
 
 }
