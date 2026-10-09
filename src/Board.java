@@ -10,10 +10,10 @@ public class Board {
         this.height = height;
         //initialise cells
         cells = new Cell[width][height];
-        //set all to empty, risk 0
+        //set all to empty, risk 1
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                cells[i][j] = new Cell.EmptyCell(0);
+                cells[i][j] = new Cell.EmptyCell(1);
             }
         }
     }
