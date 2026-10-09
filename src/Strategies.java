@@ -71,17 +71,16 @@ public class Strategies {
     }
 
     static int calculateRisk(Coord c, GameSnake[] otherSnakes, Board board) {
-        //find distance to closest snake
+        //find distance to closest snake within 10 of us
         int closestSnakeDist = Integer.MAX_VALUE;
         for (GameSnake s: otherSnakes) {
-            Coord headPos = s.getHeadPos();
-            int dist = board.distBetween(c, headPos);
+            Coord otherHeadPos = s.getHeadPos();
+            int dist = board.distBetween(c, otherHeadPos);
             if (dist < closestSnakeDist) closestSnakeDist = dist;
+
         }
 
-        final int RADIUS = 5;
-
-        int risk = RADIUS - closestSnakeDist;
+        int risk = 5 - (closestSnakeDist*closestSnakeDist)/4;
         if (risk < 1) risk = 1;
         return risk;
     }
