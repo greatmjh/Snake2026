@@ -1,4 +1,4 @@
-public record AstarEntry(Coord location, AstarEntry prev, int cumulativeCost, int dist) implements Comparable<AstarEntry> {
+public record AstarEntry(Coord location, AstarEntry prev, int cumulativeCost, int dist, Move direction) implements Comparable<AstarEntry> {
     public int rankValue() {
         return cumulativeCost + dist;
     }

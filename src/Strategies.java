@@ -12,7 +12,7 @@ public class Strategies {
         HashSet<AstarEntry> finalised = new HashSet<>();
 
         //add source vertex
-        AstarEntry source = new AstarEntry(headPos, null, 0, board.distBetween(headPos, applePos));
+        AstarEntry source = new AstarEntry(headPos, null, 0, board.distBetween(headPos, applePos), null);
         pq.add(source);
 
         AstarEntry result = source;
@@ -23,6 +23,7 @@ public class Strategies {
             //check if we have hit the apple
             if (head.location().equals(applePos)) {
                 result = head;
+                break;
             }
             //check if already finalised
             if (finalised.contains(head)) continue;
@@ -30,12 +31,14 @@ public class Strategies {
             //add to finalised array
             finalised.add(head);
 
-            ArrayList<Coord> adjacencies = board.safeMovesFrom(head.location());
-            for (Coord c : adjacencies) {
+            ArrayList<Tuple<Move, Coord>> adjacencies = board.safeMovesFrom(head.location());
+            for (Tuple<Move, Coord> x : adjacencies) {
+                Coord c = x.y();
                 int risk = calculateRisk(c, otherSnakes, board);
                 int dist = board.distBetween(c, applePos)*0;
-                AstarEntry newEntry = new AstarEntry(c, head, head.cumulativeCost() + risk, dist);
+                AstarEntry newEntry = new AstarEntry(c, head, head.cumulativeCost() + risk, dist, x.x());
                 pq.add(newEntry);
+                if (newEntry.location().equals(applePos)) result = newEntry;
             }
         }
 
@@ -47,18 +50,7 @@ public class Strategies {
                 curr = curr.prev();
             }
             //now curr is the first node in the chain
-            if (curr.location().equals(new Coord(headPos.x + 1, headPos.y))) {
-                return Move.RIGHT;
-            } else if (curr.location().equals(new Coord(headPos.x - 1, headPos.y))) {
-                return Move.LEFT;
-            } else if (curr.location().equals(new Coord(headPos.x, headPos.y + 1))) {
-                return Move.DOWN;
-            } else if (curr.location().equals(new Coord(headPos.x, headPos.y - 1))) {
-                return Move.UP;
-            } else {
-                System.err.printf("A* failed. Head: %s\tReturned coord: %s\n", headPos.toString(), curr.location().toString());
-                return Move.STRAIGHT;
-            }
+            return curr.direction();
         } catch (NullPointerException e) {
             System.err.println("A* failed. No move was returned");
             return Move.STRAIGHT;
@@ -67,6 +59,7 @@ public class Strategies {
     }
 
     static int calculateRisk(Coord c, GameSnake[] otherSnakes, Board board) {
+        //find distance to closest snake within 10 of us
         int closestSnakeDist = Integer.MAX_VALUE;
         for (GameSnake s: otherSnakes) {
             Coord otherHeadPos = s.getHeadPos();
@@ -75,7 +68,7 @@ public class Strategies {
 
         }
 
-        int risk = 6 - closestSnakeDist;
+        int risk = 8 - closestSnakeDist;
         if (risk < 1) risk = 1;
         return risk;
     }

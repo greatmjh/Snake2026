@@ -60,7 +60,7 @@ public class Board {
 
 
 
-    public ArrayList<Coord> safeMovesFrom(Coord fromCoord) {
+    public ArrayList<Tuple<Move, Coord>> safeMovesFrom(Coord fromCoord) {
         //translated coords
         Coord up = wrap(new Coord(fromCoord.x, fromCoord.y - 1));
         Coord down = wrap(new Coord(fromCoord.x, fromCoord.y + 1));
@@ -68,15 +68,15 @@ public class Board {
         Coord right = wrap(new Coord(fromCoord.x + 1, fromCoord.y));
 
         //find safe moves
-        ArrayList<Coord> safeMoves = new ArrayList<>();
+        ArrayList<Tuple<Move, Coord>> safeMoves = new ArrayList<>();
         //check up
-        if (getCell(up).getClass() == Cell.EmptyCell.class) safeMoves.add(up);
+        if (getCell(up).getClass() == Cell.EmptyCell.class) safeMoves.add(new Tuple<>(Move.UP, up));
         //check down
-        if (getCell(down).getClass() == Cell.EmptyCell.class) safeMoves.add(down);
+        if (getCell(down).getClass() == Cell.EmptyCell.class) safeMoves.add(new Tuple<>(Move.DOWN, down));
         //check left
-        if (getCell(left).getClass() == Cell.EmptyCell.class) safeMoves.add(left);
+        if (getCell(left).getClass() == Cell.EmptyCell.class) safeMoves.add(new Tuple<>(Move.LEFT, left));
         //check right
-        if (getCell(right).getClass() == Cell.EmptyCell.class) safeMoves.add(right);
+        if (getCell(right).getClass() == Cell.EmptyCell.class) safeMoves.add(new Tuple<>(Move.RIGHT, right));
 
         return safeMoves;
     }
