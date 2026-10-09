@@ -21,10 +21,6 @@ public class Board {
     //full initialiser
     public Board(int width, int height, Coord applePos, GameSnake us, GameSnake[] others) {
         this(width, height);
-
-        //draw apple
-        setCell(applePos, new Cell.Apple());
-
         //draw our snake
         addSnake(us, true);
 
