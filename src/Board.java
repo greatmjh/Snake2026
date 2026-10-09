@@ -58,12 +58,14 @@ public class Board {
         return Xdist + Ydist; //manhattan distance
     }
 
+
+
     public ArrayList<Tuple<Move, Coord>> safeMovesFrom(Coord fromCoord) {
         //translated coords
-        Coord up = new Coord(fromCoord.x, fromCoord.y - 1);
-        Coord down = new Coord(fromCoord.x, fromCoord.y + 1);
-        Coord left = new Coord(fromCoord.x - 1, fromCoord.y);
-        Coord right = new Coord(fromCoord.x + 1, fromCoord.y);
+        Coord up = wrap(new Coord(fromCoord.x, fromCoord.y - 1));
+        Coord down = wrap(new Coord(fromCoord.x, fromCoord.y + 1));
+        Coord left = wrap(new Coord(fromCoord.x - 1, fromCoord.y));
+        Coord right = wrap(new Coord(fromCoord.x + 1, fromCoord.y));
 
         //find safe moves
         ArrayList<Tuple<Move, Coord>> safeMoves = new ArrayList<>();
