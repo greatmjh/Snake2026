@@ -3,8 +3,9 @@ import java.util.HashSet;
 import java.util.PriorityQueue;
 
 public class Strategies {
+    static int turnNumber = 0;
     public static Move aStar(Board board, Coord headPos, Coord applePos, GameSnake[] otherSnakes) {
-
+        turnNumber++;
         //working queue
         PriorityQueue<AstarEntry> pq = new PriorityQueue<>();
 
@@ -52,7 +53,7 @@ public class Strategies {
             //now curr is the first node in the chain
             return curr.direction();
         } catch (NullPointerException e) {
-            System.err.println("A* failed. No move was returned");
+            System.err.println(turnNumber + ": A* failed. No move was returned");
             return Move.STRAIGHT;
         }
 
