@@ -10,10 +10,10 @@ public class Board {
         this.height = height;
         //initialise cells
         cells = new Cell[width][height];
-        //set all to empty, risk 1
+        //set all to empty
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                cells[i][j] = new Cell.EmptyCell(1);
+                cells[i][j] = new Cell.EmptyCell();
             }
         }
     }
@@ -60,7 +60,7 @@ public class Board {
 
 
 
-    public ArrayList<Tuple<Move, Coord>> safeMovesFrom(Coord fromCoord) {
+    public ArrayList<Coord> safeMovesFrom(Coord fromCoord) {
         //translated coords
         Coord up = wrap(new Coord(fromCoord.x, fromCoord.y - 1));
         Coord down = wrap(new Coord(fromCoord.x, fromCoord.y + 1));
@@ -68,15 +68,15 @@ public class Board {
         Coord right = wrap(new Coord(fromCoord.x + 1, fromCoord.y));
 
         //find safe moves
-        ArrayList<Tuple<Move, Coord>> safeMoves = new ArrayList<>();
+        ArrayList<Coord> safeMoves = new ArrayList<>();
         //check up
-        if (getCell(up).isSafe()) safeMoves.add(new Tuple<>(Move.UP, up));
+        if (getCell(up).getClass() == Cell.EmptyCell.class) safeMoves.add(up);
         //check down
-        if (getCell(down).isSafe()) safeMoves.add(new Tuple<>(Move.DOWN, down));
+        if (getCell(down).getClass() == Cell.EmptyCell.class) safeMoves.add(down);
         //check left
-        if (getCell(left).isSafe()) safeMoves.add(new Tuple<>(Move.LEFT, left));
+        if (getCell(left).getClass() == Cell.EmptyCell.class) safeMoves.add(left);
         //check right
-        if (getCell(right).isSafe()) safeMoves.add(new Tuple<>(Move.RIGHT, right));
+        if (getCell(right).getClass() == Cell.EmptyCell.class) safeMoves.add(right);
 
         return safeMoves;
     }
