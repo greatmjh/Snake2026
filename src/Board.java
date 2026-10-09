@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Board {
     public final int width, height;
     private Cell[][] cells;
@@ -58,6 +60,27 @@ public class Board {
         int Xdist = shortestWrapDistance(a.x, b.x, width);
         int Ydist = shortestWrapDistance(a.y, b.y, height);
         return Xdist + Ydist; //manhattan distance
+    }
+
+    public ArrayList<Tuple<Move, Coord>> safeMovesFrom(Coord fromCoord) {
+        //translated coords
+        Coord up = new Coord(fromCoord.x, fromCoord.y - 1);
+        Coord down = new Coord(fromCoord.x, fromCoord.y + 1);
+        Coord left = new Coord(fromCoord.x - 1, fromCoord.y);
+        Coord right = new Coord(fromCoord.x + 1, fromCoord.y);
+
+        //find safe moves
+        ArrayList<Tuple<Move, Coord>> safeMoves = new ArrayList<>();
+        //check up
+        if (getCell(up).isSafe()) safeMoves.add(new Tuple<>(Move.UP, up));
+        //check down
+        if (getCell(down).isSafe()) safeMoves.add(new Tuple<>(Move.DOWN, down));
+        //check left
+        if (getCell(left).isSafe()) safeMoves.add(new Tuple<>(Move.LEFT, left));
+        //check right
+        if (getCell(right).isSafe()) safeMoves.add(new Tuple<>(Move.RIGHT, right));
+
+        return safeMoves;
     }
 
     private Coord wrap(Coord c) {
