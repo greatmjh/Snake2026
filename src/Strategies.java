@@ -5,6 +5,12 @@ import java.util.PriorityQueue;
 public class Strategies {
     static int turnNumber = 0;
     public static Move aStar(Board board, Coord headPos, Coord applePos, GameSnake[] otherSnakes) {
+
+        //check if there is anything safe
+        if (board.safeMovesFrom(headPos).isEmpty()) {
+            System.out.printf("log %d: no safe moves, going straight", turnNumber);
+            return Move.STRAIGHT;
+        }
         turnNumber++;
         //working queue
         PriorityQueue<AstarEntry> pq = new PriorityQueue<>();
