@@ -40,7 +40,7 @@ public class Strategies {
             for (Tuple<Move, Coord> x : adjacencies) {
                 Coord c = x.y();
                 int risk = calculateRisk(c, otherSnakes, board);
-                int dist = board.distBetween(c, applePos)*0;
+                int dist = board.distBetween(c, applePos);
                 AstarEntry newEntry = new AstarEntry(c, head, head.cumulativeCost() + risk, dist, x.x());
                 pq.add(newEntry);
                 if (newEntry.location().equals(applePos)) result = newEntry;
