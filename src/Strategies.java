@@ -49,7 +49,9 @@ public class Strategies {
 
         //now trace path back from apple
         if (result == null) {
-            throw new RuntimeException("A* failed. Did not finalise the apple.");
+            //apple isn't reachable, fallback to naive to make sure we dont kill ourselves
+            System.out.printf("log %d: apple unreachable, falling back to naive", Snake.turnNumber);
+            return naive(board, headPos, applePos);
         }
         AstarEntry curr = result;
         while (!curr.prev().equals(source)) {
@@ -73,5 +75,25 @@ public class Strategies {
         int risk = 8 - closestSnakeDist;
         if (risk < 1) risk = 1;
         return risk;
+    }
+
+    public static Move naive(Board board, Coord headPos, Coord applePos) {
+
+        ArrayList<Tuple<Move, Coord>> safeMoves = board.safeMovesFrom(headPos);
+        if (safeMoves.isEmpty()) return Move.STRAIGHT; //we are cooked
+
+        //Find the best move
+        int bestDist = Integer.MAX_VALUE;
+        Move bestMove = Move.STRAIGHT;
+
+        for (Tuple<Move, Coord> m: safeMoves) {
+            int dist = board.distBetween(applePos, m.y());
+            if (dist < bestDist) {
+                bestDist = dist;
+                bestMove = m.x();
+            }
+        }
+
+        return bestMove;
     }
 }
