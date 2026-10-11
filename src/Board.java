@@ -120,6 +120,11 @@ public class Board {
     public void addSnake(GameSnake snake, boolean isUs) {
         //Draw the snake
         for (int i = 1; i < snake.coords.size(); i++) {
+            //check for repeated coord
+            if (snake.coords.get(i).equals(snake.coords.get(i-1))) {
+                i++;
+                continue;
+            }
             drawLine(snake.coords.get(i-1), snake.coords.get(i), new Cell.SnakeCell(isUs, false));
         }
 
