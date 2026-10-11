@@ -7,7 +7,7 @@ public class Strategies {
 
         //check if there is anything safe
         if (board.safeMovesFrom(headPos).isEmpty()) {
-            System.out.printf("log %d: no safe moves, going straight", Snake.turnNumber);
+            System.out.printf("log %d: no safe moves, going straight\n", Snake.turnNumber);
             return Move.STRAIGHT;
         }
         //working queue
@@ -50,7 +50,7 @@ public class Strategies {
         //now trace path back from apple
         if (result == null) {
             //apple isn't reachable, fallback to naive to make sure we dont kill ourselves
-            System.out.printf("log %d: apple unreachable, falling back to naive", Snake.turnNumber);
+            System.out.printf("log %d: apple unreachable, falling back to naive\n", Snake.turnNumber);
             return naive(board, headPos, applePos);
         }
         AstarEntry curr = result;
