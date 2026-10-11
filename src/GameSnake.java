@@ -43,4 +43,5 @@ public class GameSnake {
             coords.add(new Coord(sc.next()));
         }
     }
+
 }

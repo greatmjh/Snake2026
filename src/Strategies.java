@@ -3,15 +3,13 @@ import java.util.HashSet;
 import java.util.PriorityQueue;
 
 public class Strategies {
-    static int turnNumber = 0;
     public static Move aStar(Board board, Coord headPos, Coord applePos, GameSnake[] otherSnakes) {
 
         //check if there is anything safe
         if (board.safeMovesFrom(headPos).isEmpty()) {
-            System.out.printf("log %d: no safe moves, going straight", turnNumber);
+            System.out.printf("log %d: no safe moves, going straight", Snake.turnNumber);
             return Move.STRAIGHT;
         }
-        turnNumber++;
         //working queue
         PriorityQueue<AstarEntry> pq = new PriorityQueue<>();
 
@@ -22,7 +20,7 @@ public class Strategies {
         AstarEntry source = new AstarEntry(headPos, null, 0, board.distBetween(headPos, applePos), null);
         pq.add(source);
 
-        AstarEntry result = source;
+        AstarEntry result = null;
         //main loop
         while (!pq.isEmpty()) {
             //finalise the top of the PQ
@@ -50,18 +48,15 @@ public class Strategies {
         }
 
         //now trace path back from apple
-
-        try {
-            AstarEntry curr = result;
-            while (!curr.prev().equals(source)) {
-                curr = curr.prev();
-            }
-            //now curr is the first node in the chain
-            return curr.direction();
-        } catch (NullPointerException e) {
-            System.err.println(turnNumber + ": A* failed. No move was returned");
-            return Move.STRAIGHT;
+        if (result == null) {
+            throw new RuntimeException("A* failed. Did not finalise the apple.");
         }
+        AstarEntry curr = result;
+        while (!curr.prev().equals(source)) {
+            curr = curr.prev();
+        }
+        //now curr is the first node in the chain
+        return curr.direction();
 
     }
 
