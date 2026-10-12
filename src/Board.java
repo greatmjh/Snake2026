@@ -1,4 +1,7 @@
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 public class Board {
     public final int width, height;
@@ -58,7 +61,17 @@ public class Board {
         return Xdist + Ydist; //manhattan distance
     }
 
+    public List<Tuple<Move, Coord>> movesFrom(Coord fromCoord) {
+        Coord up = wrap(new Coord(fromCoord.x, fromCoord.y - 1));
+        Coord down = wrap(new Coord(fromCoord.x, fromCoord.y + 1));
+        Coord left = wrap(new Coord(fromCoord.x - 1, fromCoord.y));
+        Coord right = wrap(new Coord(fromCoord.x + 1, fromCoord.y));
 
+        return List.of(new Tuple<>(Move.UP, up),
+                new Tuple<>(Move.DOWN, down),
+                new Tuple<>(Move.LEFT, left),
+                new Tuple<>(Move.RIGHT, right));
+    }
 
     public ArrayList<Tuple<Move, Coord>> safeMovesFrom(Coord fromCoord) {
         //translated coords
@@ -81,7 +94,37 @@ public class Board {
         return safeMoves;
     }
 
-    private Coord wrap(Coord c) {
+    public ArrayList<Tuple<Move, Coord>> doubleSafeMovesFrom(Coord fromCoord) {
+        ArrayList<Tuple<Move, Coord>> doubleSafeMoves = new ArrayList<>();
+        //find safe moves
+        ArrayList<Tuple<Move, Coord>> safeMoves = safeMovesFrom(fromCoord);
+        for (Tuple<Move, Coord> x: safeMoves) {
+            if (safeMovesFrom(x.y()).size() == 4) {
+                doubleSafeMoves.add(x);
+            }
+        }
+
+        return doubleSafeMoves;
+    }
+
+    public HashSet<Coord> reachableDoubleSafeFrom(Coord fromCoord, int limit) {
+        HashSet<Coord> result = new HashSet<>();
+        ArrayDeque<Coord> workingQueue = new ArrayDeque<>();
+        workingQueue.add(fromCoord);
+        int i = 0;
+        while (!workingQueue.isEmpty() && i++ < limit) {
+            Coord head = workingQueue.poll();
+            if (result.contains(head)) continue;
+            result.add(head);
+            ArrayList<Tuple<Move, Coord>> doubleSafeFromHere = doubleSafeMovesFrom(head);
+            for (Tuple<Move, Coord> x: doubleSafeFromHere) {
+                workingQueue.add(x.y());
+            }
+        }
+        return result;
+    }
+
+    public Coord wrap(Coord c) {
         Coord result = new Coord(c.x, c.y);
         if (result.x >= 0) {
             result.x %= (width);

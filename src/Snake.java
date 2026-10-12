@@ -48,7 +48,7 @@ public class Snake {
             Board board = new Board(width, height, applePos, ourSnake, otherSnakes);
 
             try {
-                Move move = Strategies.aStar(board, ourSnake.getHeadPos(), applePos, otherSnakes);
+                Move move = Strategies.adaptive(board, ourSnake.getHeadPos(), applePos, otherSnakes, ourSnake);
                 //Output
                 move.print();
             } catch (RuntimeException r) {

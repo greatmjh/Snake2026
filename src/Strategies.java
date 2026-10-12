@@ -1,15 +1,43 @@
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.PriorityQueue;
 
 public class Strategies {
-    public static Move aStar(Board board, Coord headPos, Coord applePos, GameSnake[] otherSnakes) {
-
+    public static Move adaptive(Board board, Coord headPos, Coord applePos, GameSnake[] otherSnakes, GameSnake us) {
         //check if there is anything safe
         if (board.safeMovesFrom(headPos).isEmpty()) {
             System.out.printf("log %d: no safe moves, going straight\n", Snake.turnNumber);
             return Move.STRAIGHT;
         }
+        //check if we are longest
+        int longestSnake = 0;
+        for (GameSnake s: otherSnakes) {
+            if (s.length > longestSnake) longestSnake = s.length;
+        }
+        //if (us.length > longestSnake*1.1) return claustrophobic(board, headPos);
+
+        //Check if we can get a kill
+        List<Tuple<Move, Coord>> possibleMoves = board.movesFrom(headPos);
+        for (GameSnake s: otherSnakes) {
+            if (s.length < us.length) {
+                for (Tuple<Move, Coord> x: possibleMoves) {
+                    if (s.getHeadPos().equals(x.y())) return x.x();
+                }
+            }
+        }
+
+        Move aStarCandidate = aStar(board, headPos, applePos, otherSnakes, us);
+        if (aStarCandidate == null) {
+            //apple isn't reachable, fallback to naive to make sure we dont kill ourselves
+            System.out.printf("log %d: apple unreachable, falling back to claustrophobic\n", Snake.turnNumber);
+            return claustrophobic(board, headPos);
+        } else {
+            return aStarCandidate;
+        }
+    }
+
+    public static Move aStar(Board board, Coord headPos, Coord applePos, GameSnake[] otherSnakes, GameSnake us) {
         //working queue
         PriorityQueue<AstarEntry> pq = new PriorityQueue<>();
 
@@ -39,7 +67,7 @@ public class Strategies {
             ArrayList<Tuple<Move, Coord>> adjacencies = board.safeMovesFrom(head.location());
             for (Tuple<Move, Coord> x : adjacencies) {
                 Coord c = x.y();
-                int risk = calculateRisk(c, otherSnakes, board);
+                int risk = calculateRisk(c, otherSnakes, board, us.length);
                 int dist = board.distBetween(c, applePos);
                 AstarEntry newEntry = new AstarEntry(c, head, head.cumulativeCost() + risk, dist, x.x());
                 pq.add(newEntry);
@@ -49,9 +77,7 @@ public class Strategies {
 
         //now trace path back from apple
         if (result == null) {
-            //apple isn't reachable, fallback to naive to make sure we dont kill ourselves
-            System.out.printf("log %d: apple unreachable, falling back to naive\n", Snake.turnNumber);
-            return naive(board, headPos, applePos);
+            return null;
         }
         AstarEntry curr = result;
         while (!curr.prev().equals(source)) {
@@ -62,7 +88,7 @@ public class Strategies {
 
     }
 
-    static int calculateRisk(Coord c, GameSnake[] otherSnakes, Board board) {
+    static int calculateRisk(Coord c, GameSnake[] otherSnakes, Board board, int ourLength) {
         //find distance to closest snake within 10 of us
         int closestSnakeDist = Integer.MAX_VALUE;
         for (GameSnake s: otherSnakes) {
@@ -72,7 +98,7 @@ public class Strategies {
 
         }
 
-        int risk = 8 - closestSnakeDist;
+        int risk = ourLength - closestSnakeDist*closestSnakeDist;
         if (risk < 1) risk = 1;
         return risk;
     }
@@ -94,6 +120,20 @@ public class Strategies {
             }
         }
 
+        return bestMove;
+    }
+
+    public static Move claustrophobic(Board board, Coord c) {
+        ArrayList<Tuple<Move, Coord>> safeMoves = board.safeMovesFrom(c);
+        if (safeMoves.isEmpty()) return Move.STRAIGHT;
+        int bestSpace = 0;
+        Move bestMove = Move.STRAIGHT;
+        for (Tuple<Move, Coord> x: safeMoves) {
+            int currSpace = board.reachableDoubleSafeFrom(x.y(), 500).size();
+            if (currSpace > bestSpace) {
+                bestMove = x.x();
+            }
+        }
         return bestMove;
     }
 }

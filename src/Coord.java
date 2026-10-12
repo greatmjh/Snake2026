@@ -31,4 +31,9 @@ public class Coord {
     public String toString() {
         return String.format("(%s,%s)", x, y);
     }
+
+    @Override
+    public int hashCode() {
+        return 100*x + y;
+    }
 }
