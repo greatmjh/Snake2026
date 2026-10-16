@@ -73,6 +73,21 @@ public class Board {
                 new Tuple<>(Move.RIGHT, right));
     }
 
+    public Coord coordFromMove(Coord fromCoord, Move m) {
+        Coord up = wrap(new Coord(fromCoord.x, fromCoord.y - 1));
+        Coord down = wrap(new Coord(fromCoord.x, fromCoord.y + 1));
+        Coord left = wrap(new Coord(fromCoord.x - 1, fromCoord.y));
+        Coord right = wrap(new Coord(fromCoord.x + 1, fromCoord.y));
+        return switch (m) {
+            case UP -> up;
+            case DOWN -> down;
+            case LEFT -> left;
+            case RIGHT -> right;
+            default -> null;
+        };
+
+    }
+
     public ArrayList<Tuple<Move, Coord>> safeMovesFrom(Coord fromCoord) {
         //translated coords
         Coord up = wrap(new Coord(fromCoord.x, fromCoord.y - 1));

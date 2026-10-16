@@ -14,7 +14,7 @@ public class DbgUtils {
                     }
                 } else {
                     if (isApple) {
-                        System.out.print("A ");
+                        System.out.print("a ");
                     } else {
                         System.out.print("  ");
                     }

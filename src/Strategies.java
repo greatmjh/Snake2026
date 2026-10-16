@@ -15,29 +15,26 @@ public class Strategies {
         for (GameSnake s: otherSnakes) {
             if (s.length > longestSnake) longestSnake = s.length;
         }
-        //if (us.length > longestSnake*1.1) return claustrophobic(board, headPos);
 
-        //Check if we can get a kill
-        List<Tuple<Move, Coord>> possibleMoves = board.movesFrom(headPos);
-        for (GameSnake s: otherSnakes) {
-            if (s.length < us.length) {
-                for (Tuple<Move, Coord> x: possibleMoves) {
-                    if (s.getHeadPos().equals(x.y())) return x.x();
-                }
-            }
-        }
-
-        Move aStarCandidate = aStar(board, headPos, applePos, otherSnakes, us);
+        Move aStarCandidate = aStar(board, headPos, applePos, otherSnakes, us, false);
         if (aStarCandidate == null) {
             //apple isn't reachable, fallback to naive to make sure we dont kill ourselves
             System.out.printf("log %d: apple unreachable, falling back to claustrophobic\n", Snake.turnNumber);
             return claustrophobic(board, headPos);
         } else {
-            return aStarCandidate;
+            //check if the move we made is safe in the long term
+
+            if (aStar(board, board.coordFromMove(headPos, aStarCandidate), us.getTailPos(), otherSnakes, us, true) != null) {
+                return aStarCandidate;
+            } else {
+                System.out.printf("log %d: a* unsafe, falling back to claustrophobic\n", Snake.turnNumber);
+                return claustrophobic(board, headPos);
+
+            }
         }
     }
 
-    public static Move aStar(Board board, Coord headPos, Coord applePos, GameSnake[] otherSnakes, GameSnake us) {
+    public static Move aStar(Board board, Coord headPos, Coord applePos, GameSnake[] otherSnakes, GameSnake us, boolean searchAdjToo) {
         //working queue
         PriorityQueue<AstarEntry> pq = new PriorityQueue<>();
 
@@ -54,6 +51,12 @@ public class Strategies {
             //finalise the top of the PQ
             AstarEntry head = pq.remove();
             //check if we have hit the apple
+            if (searchAdjToo) {
+                List<Tuple<Move, Coord>> adj = board.movesFrom(head.location());
+                for (Tuple<Move, Coord> a : adj) {
+                    if (a.y().equals(applePos)) result = head;
+                }
+            }
             if (head.location().equals(applePos)) {
                 result = head;
                 break;
@@ -79,12 +82,14 @@ public class Strategies {
         if (result == null) {
             return null;
         }
+        if (result.location().equals(headPos)) return null;
         AstarEntry curr = result;
         while (!curr.prev().equals(source)) {
             curr = curr.prev();
         }
         //now curr is the first node in the chain
         return curr.direction();
+
 
     }
 
@@ -98,7 +103,7 @@ public class Strategies {
 
         }
 
-        int risk = ourLength - closestSnakeDist*closestSnakeDist;
+        int risk = 10 - closestSnakeDist*closestSnakeDist/4;
         if (risk < 1) risk = 1;
         return risk;
     }

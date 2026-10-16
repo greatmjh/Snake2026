@@ -61,6 +61,7 @@ public class Snake {
                 for (String s : snakeStrings) {
                     System.err.println(s);
                 }
+                r.printStackTrace();
                 System.exit(1);
             }
         }
