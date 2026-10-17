@@ -16,7 +16,7 @@ public class Board {
         //set all to empty
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                cells[i][j] = new Cell.EmptyCell();
+                cells[i][j] = new Cell.FreeCell(false);
             }
         }
     }
@@ -32,8 +32,10 @@ public class Board {
             if (other.alive) {
                 addSnake(other, false);
             }
-
         }
+
+        //add apple
+        setCell(applePos, new Cell.FreeCell(true));
     }
 
     public Cell getCell(Coord c) {
@@ -98,13 +100,13 @@ public class Board {
         //find safe moves
         ArrayList<Tuple<Move, Coord>> safeMoves = new ArrayList<>();
         //check up
-        if (getCell(up).getClass() == Cell.EmptyCell.class) safeMoves.add(new Tuple<>(Move.UP, up));
+        if (getCell(up).getClass() == Cell.FreeCell.class) safeMoves.add(new Tuple<>(Move.UP, up));
         //check down
-        if (getCell(down).getClass() == Cell.EmptyCell.class) safeMoves.add(new Tuple<>(Move.DOWN, down));
+        if (getCell(down).getClass() == Cell.FreeCell.class) safeMoves.add(new Tuple<>(Move.DOWN, down));
         //check left
-        if (getCell(left).getClass() == Cell.EmptyCell.class) safeMoves.add(new Tuple<>(Move.LEFT, left));
+        if (getCell(left).getClass() == Cell.FreeCell.class) safeMoves.add(new Tuple<>(Move.LEFT, left));
         //check right
-        if (getCell(right).getClass() == Cell.EmptyCell.class) safeMoves.add(new Tuple<>(Move.RIGHT, right));
+        if (getCell(right).getClass() == Cell.FreeCell.class) safeMoves.add(new Tuple<>(Move.RIGHT, right));
 
         return safeMoves;
     }
