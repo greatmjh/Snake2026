@@ -38,6 +38,16 @@ public class Board {
         setCell(applePos, new Cell.FreeCell(true));
     }
 
+    public void print() {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                System.out.print(getCell(new Coord(j, i)).toChar() + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    //Getters and setters for cells
     public Cell getCell(Coord c) {
         Coord cw = wrap(c);
         return cells[cw.x][cw.y];
@@ -46,15 +56,6 @@ public class Board {
     public void setCell(Coord c, Cell toSet) {
         Coord cw = wrap(c);
         cells[cw.x][cw.y] = toSet;
-    }
-
-    public void print() {
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                System.out.print(getCell(new Coord(j, i)).toChar() + " ");
-            }
-            System.out.println();
-        }
     }
 
     public int distBetween(Coord a, Coord b) {
@@ -122,7 +123,8 @@ public class Board {
         return result;
     }
 
-    public Coord wrap(Coord c) {
+    //internal methods
+    Coord wrap(Coord c) {
         Coord result = new Coord(c.x, c.y);
         if (result.x >= 0) {
             result.x %= (width);
@@ -156,7 +158,6 @@ public class Board {
             }
         }
     }
-
 
     public void addSnake(GameSnake snake, boolean isUs) {
         //Draw the snake
