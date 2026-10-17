@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Board {
     public final int width, height;
-    private Cell[][] cells;
+    private final Cell[][] cells;
 
     //Basic initialiser
     public Board(int width, int height) {
