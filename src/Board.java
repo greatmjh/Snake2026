@@ -16,7 +16,7 @@ public class Board {
         //set all to empty
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                cells[i][j] = new Cell.FreeCell(false);
+                setCell(new Coord(i, j), new Cell.FreeCell(false));
             }
         }
     }
@@ -51,7 +51,7 @@ public class Board {
     public void print() {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                System.out.print(cells[j][i].toChar() + " ");
+                System.out.print(getCell(new Coord(j, i)).toChar() + " ");
             }
             System.out.println();
         }
@@ -171,7 +171,7 @@ public class Board {
         //Fill the area
         for (int i = minX; i <= maxX; i++) {
             for (int j = minY; j <= maxY; j++) {
-                cells[i][j] = cellType;
+                setCell(new Coord(i, j), cellType);
             }
         }
     }
@@ -189,7 +189,7 @@ public class Board {
         }
 
         //Mark the head
-        cells[snake.getHeadPos().x][snake.getHeadPos().y] = new Cell.SnakeCell(isUs, true);
+        setCell(snake.getHeadPos(), new Cell.SnakeCell(isUs, true));
     }
 
     static int shortestWrapDistance(int a, int b, int k) {
