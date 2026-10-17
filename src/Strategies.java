@@ -50,13 +50,7 @@ public class Strategies {
             //finalise the top of the PQ
             AstarEntry head = pq.remove();
             //check if we have hit the apple
-            if (searchAdjToo) {
-                List<Tuple<Move, Coord>> adj = gs.board().movesFrom(head.location());
-                for (Tuple<Move, Coord> a : adj) {
-                    if (a.y().equals(toCoord)) result = head;
-                }
-            }
-            if (head.location().equals(toCoord)) {
+            if ((searchAdjToo && gs.board().distBetween(head.location(), toCoord) <= 1) || head.location().equals(toCoord)) {
                 result = head;
                 break;
             }
