@@ -101,6 +101,13 @@ public class Strategies {
     public static Move claustrophobic(GameState gs, Coord fromCoord) {
         ArrayList<Tuple<Move, Coord>> safeMoves = gs.board().safeMovesFrom(fromCoord);
         if (safeMoves.isEmpty()) return Move.STRAIGHT;
+        //find moves where we can actually reach our tail
+        ArrayList<Tuple<Move, Coord>> tailReachingMoves = new ArrayList<>();
+        for (Tuple<Move, Coord> a : safeMoves) {
+            if (aStar(gs, a.y(), gs.ourSnake().getTailPos(), true) != null) tailReachingMoves.add(a);
+        }
+        if (!tailReachingMoves.isEmpty()) safeMoves = tailReachingMoves;
+
         int bestSpace = 0;
         Move bestMove = Move.STRAIGHT;
         for (Tuple<Move, Coord> x: safeMoves) {
