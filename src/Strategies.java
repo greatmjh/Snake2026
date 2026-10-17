@@ -4,37 +4,36 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 public class Strategies {
-    public static Move adaptive(Board board, Coord headPos, Coord applePos, GameSnake[] otherSnakes, GameSnake us) {
+    public static Move adaptive(GameState gs) {
         //check if there is anything safe
-        if (board.safeMovesFrom(headPos).isEmpty()) {
+        if (gs.board().safeMovesFrom(gs.ourSnake().getHeadPos()).isEmpty()) {
             System.out.printf("log %d: no safe moves, going straight\n", Snake.turnNumber);
             return Move.STRAIGHT;
         }
         //check if we are longest
         int longestSnake = 0;
-        for (GameSnake s: otherSnakes) {
+        for (GameSnake s: gs.otherSnakes()) {
             if (s.length > longestSnake) longestSnake = s.length;
         }
 
-        Move aStarCandidate = aStar(board, headPos, applePos, otherSnakes, us, false);
+        Move aStarCandidate = aStar(gs, gs.ourSnake().getHeadPos(), gs.applePos(), false);
         if (aStarCandidate == null) {
             //apple isn't reachable, fallback to naive to make sure we dont kill ourselves
             System.out.printf("log %d: apple unreachable, falling back to claustrophobic\n", Snake.turnNumber);
-            return claustrophobic(board, headPos);
+            return claustrophobic(gs, gs.ourSnake().getHeadPos());
         } else {
             //check if the move we made is safe in the long term
-
-            if (aStar(board, board.coordFromMove(headPos, aStarCandidate), us.getTailPos(), otherSnakes, us, true) != null) {
+            if (aStar(gs, gs.board().coordFromMove(gs.ourSnake().getHeadPos(), aStarCandidate), gs.ourSnake().getTailPos(), true) != null) {
                 return aStarCandidate;
             } else {
                 System.out.printf("log %d: a* unsafe, falling back to claustrophobic\n", Snake.turnNumber);
-                return claustrophobic(board, headPos);
+                return claustrophobic(gs, gs.ourSnake().getHeadPos());
 
             }
         }
     }
 
-    public static Move aStar(Board board, Coord headPos, Coord applePos, GameSnake[] otherSnakes, GameSnake us, boolean searchAdjToo) {
+    public static Move aStar(GameState gs, Coord fromCoord, Coord toCoord, boolean searchAdjToo) {
         //working queue
         PriorityQueue<AstarEntry> pq = new PriorityQueue<>();
 
@@ -42,7 +41,7 @@ public class Strategies {
         HashSet<AstarEntry> finalised = new HashSet<>();
 
         //add source vertex
-        AstarEntry source = new AstarEntry(headPos, null, 0, board.distBetween(headPos, applePos), null);
+        AstarEntry source = new AstarEntry(fromCoord, null, 0, gs.board().distBetween(fromCoord, toCoord), null);
         pq.add(source);
 
         AstarEntry result = null;
@@ -52,12 +51,12 @@ public class Strategies {
             AstarEntry head = pq.remove();
             //check if we have hit the apple
             if (searchAdjToo) {
-                List<Tuple<Move, Coord>> adj = board.movesFrom(head.location());
+                List<Tuple<Move, Coord>> adj = gs.board().movesFrom(head.location());
                 for (Tuple<Move, Coord> a : adj) {
-                    if (a.y().equals(applePos)) result = head;
+                    if (a.y().equals(toCoord)) result = head;
                 }
             }
-            if (head.location().equals(applePos)) {
+            if (head.location().equals(toCoord)) {
                 result = head;
                 break;
             }
@@ -67,14 +66,14 @@ public class Strategies {
             //add to finalised array
             finalised.add(head);
 
-            ArrayList<Tuple<Move, Coord>> adjacencies = board.safeMovesFrom(head.location());
+            ArrayList<Tuple<Move, Coord>> adjacencies = gs.board().safeMovesFrom(head.location());
             for (Tuple<Move, Coord> x : adjacencies) {
                 Coord c = x.y();
-                int risk = calculateRisk(c, otherSnakes, board, us.length);
-                int dist = board.distBetween(c, applePos);
+                int risk = calculateRisk(c, gs.otherSnakes(), gs.board(), gs.ourSnake().length);
+                int dist = gs.board().distBetween(c, toCoord);
                 AstarEntry newEntry = new AstarEntry(c, head, head.cumulativeCost() + risk, dist, x.x());
                 pq.add(newEntry);
-                if (newEntry.location().equals(applePos)) result = newEntry;
+                if (newEntry.location().equals(toCoord)) result = newEntry;
             }
         }
 
@@ -82,15 +81,13 @@ public class Strategies {
         if (result == null) {
             return null;
         }
-        if (result.location().equals(headPos)) return null;
+        if (result.location().equals(fromCoord)) return null;
         AstarEntry curr = result;
         while (!curr.prev().equals(source)) {
             curr = curr.prev();
         }
         //now curr is the first node in the chain
         return curr.direction();
-
-
     }
 
     static int calculateRisk(Coord c, GameSnake[] otherSnakes, Board board, int ourLength) {
@@ -128,13 +125,13 @@ public class Strategies {
         return bestMove;
     }
 
-    public static Move claustrophobic(Board board, Coord c) {
-        ArrayList<Tuple<Move, Coord>> safeMoves = board.safeMovesFrom(c);
+    public static Move claustrophobic(GameState gs, Coord fromCoord) {
+        ArrayList<Tuple<Move, Coord>> safeMoves = gs.board().safeMovesFrom(fromCoord);
         if (safeMoves.isEmpty()) return Move.STRAIGHT;
         int bestSpace = 0;
         Move bestMove = Move.STRAIGHT;
         for (Tuple<Move, Coord> x: safeMoves) {
-            int currSpace = board.reachableDoubleSafeFrom(x.y(), 500).size();
+            int currSpace = gs.board().reachableDoubleSafeFrom(x.y(), 500).size();
             if (currSpace > bestSpace) {
                 bestMove = x.x();
             }

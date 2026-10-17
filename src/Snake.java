@@ -46,9 +46,10 @@ public class Snake {
             }
 
             Board board = new Board(width, height, applePos, ourSnake, otherSnakes);
+            GameState gs = new GameState(board, ourSnake, otherSnakes, applePos);
 
             try {
-                Move move = Strategies.adaptive(board, ourSnake.getHeadPos(), applePos, otherSnakes, ourSnake);
+                Move move = Strategies.adaptive(gs);
                 //Output
                 move.print();
             } catch (RuntimeException r) {
