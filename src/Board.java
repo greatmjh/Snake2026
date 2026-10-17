@@ -63,18 +63,6 @@ public class Board {
         return Xdist + Ydist; //manhattan distance
     }
 
-    public List<Tuple<Move, Coord>> movesFrom(Coord fromCoord) {
-        Coord up = wrap(new Coord(fromCoord.x, fromCoord.y - 1));
-        Coord down = wrap(new Coord(fromCoord.x, fromCoord.y + 1));
-        Coord left = wrap(new Coord(fromCoord.x - 1, fromCoord.y));
-        Coord right = wrap(new Coord(fromCoord.x + 1, fromCoord.y));
-
-        return List.of(new Tuple<>(Move.UP, up),
-                new Tuple<>(Move.DOWN, down),
-                new Tuple<>(Move.LEFT, left),
-                new Tuple<>(Move.RIGHT, right));
-    }
-
     public Coord coordFromMove(Coord fromCoord, Move m) {
         Coord up = wrap(new Coord(fromCoord.x, fromCoord.y - 1));
         Coord down = wrap(new Coord(fromCoord.x, fromCoord.y + 1));
@@ -87,27 +75,24 @@ public class Board {
             case RIGHT -> right;
             default -> null;
         };
+    }
 
+    public List<Tuple<Move, Coord>> movesFrom(Coord fromCoord) {
+        return List.of(new Tuple<>(Move.UP, coordFromMove(fromCoord, Move.UP)),
+                new Tuple<>(Move.DOWN, coordFromMove(fromCoord, Move.DOWN)),
+                new Tuple<>(Move.LEFT, coordFromMove(fromCoord, Move.LEFT)),
+                new Tuple<>(Move.RIGHT, coordFromMove(fromCoord, Move.RIGHT)));
     }
 
     public ArrayList<Tuple<Move, Coord>> safeMovesFrom(Coord fromCoord) {
-        //translated coords
-        Coord up = wrap(new Coord(fromCoord.x, fromCoord.y - 1));
-        Coord down = wrap(new Coord(fromCoord.x, fromCoord.y + 1));
-        Coord left = wrap(new Coord(fromCoord.x - 1, fromCoord.y));
-        Coord right = wrap(new Coord(fromCoord.x + 1, fromCoord.y));
+        //all possible moves
+        List<Tuple<Move, Coord>> possibleMoves = movesFrom(fromCoord);
 
         //find safe moves
         ArrayList<Tuple<Move, Coord>> safeMoves = new ArrayList<>();
-        //check up
-        if (getCell(up).getClass() == Cell.FreeCell.class) safeMoves.add(new Tuple<>(Move.UP, up));
-        //check down
-        if (getCell(down).getClass() == Cell.FreeCell.class) safeMoves.add(new Tuple<>(Move.DOWN, down));
-        //check left
-        if (getCell(left).getClass() == Cell.FreeCell.class) safeMoves.add(new Tuple<>(Move.LEFT, left));
-        //check right
-        if (getCell(right).getClass() == Cell.FreeCell.class) safeMoves.add(new Tuple<>(Move.RIGHT, right));
-
+        for (Tuple<Move, Coord> a : possibleMoves) {
+            if (getCell(a.y()).getClass() == Cell.FreeCell.class) safeMoves.add(a);
+        }
         return safeMoves;
     }
 
