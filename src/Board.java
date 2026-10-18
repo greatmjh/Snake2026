@@ -130,14 +130,14 @@ public class Board {
             result.x %= (width);
             if (result.x >= width) System.err.println("61");
         } else {
-            result.x = width - ((-result.x) % (width - 1)) - 1;
+            result.x = width - ((-result.x) % (width - 1));
             if (result.x >= width) System.err.println("64");
         }
         if (result.y >= 0) {
             result.y %= (height);
             if (result.y >= height) System.err.println("68");
         } else {
-            result.y = height - ((-result.y) % (height - 1)) - 1;
+            result.y = height - ((-result.y) % (height - 1));
             if (result.y >= height) System.err.println("71");
 
         }
