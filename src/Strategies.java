@@ -9,27 +9,24 @@ public class Strategies {
             System.out.printf("log %d: no safe moves, going straight\n", Snake.turnNumber);
             return Move.STRAIGHT;
         }
-        //check if we are longest
-        int longestSnake = 0;
-        for (GameSnake s: gs.otherSnakes()) {
-            if (s.length > longestSnake) longestSnake = s.length;
-        }
 
-        Move aStarCandidate = aStar(gs, gs.ourSnake().getHeadPos(), gs.applePos(), false);
-        if (aStarCandidate == null) {
-            //apple isn't reachable, fallback to naive to make sure we dont kill ourselves
-            System.out.printf("log %d: apple unreachable, falling back to claustrophobic\n", Snake.turnNumber);
-            return claustrophobic(gs, gs.ourSnake().getHeadPos());
-        } else {
-            //check if the move we made is safe in the long term
-            if (aStar(gs, gs.board().coordFromMove(gs.ourSnake().getHeadPos(), aStarCandidate), gs.ourSnake().getTailPos(), true) != null) {
-                return aStarCandidate;
-            } else {
-                System.out.printf("log %d: a* unsafe, falling back to claustrophobic\n", Snake.turnNumber);
-                return claustrophobic(gs, gs.ourSnake().getHeadPos());
-
-            }
+        Move moveToApple = aStar(gs, gs.ourSnake().getHeadPos(), gs.applePos(), false);
+        if (moveToApple != null && checkMoveSafety(gs, moveToApple)) {
+            return moveToApple;
         }
+        //apple isn't safely reachable, try chasing our tail
+        System.out.printf("log %d: apple not safely reachable, chasing tail\n", Snake.turnNumber);
+        Move chaseTail = aStar(gs, gs.ourSnake().getHeadPos(), gs.ourSnake().getTailPos(), true);
+        if (chaseTail != null && checkMoveSafety(gs, chaseTail)) {
+            return chaseTail;
+        }
+        //chasing tail isn't viable, fallback to claustrophobic
+        System.out.printf("log %d: tail safely reachable, falling back to claustrophobic\n", Snake.turnNumber);
+        return claustrophobic(gs, gs.ourSnake().getHeadPos());
+    }
+
+    static boolean checkMoveSafety(GameState gs, Move m) {
+        return aStar(gs, gs.board().coordFromMove(gs.ourSnake().getHeadPos(), m), gs.ourSnake().getTailPos(), true) != null;
     }
 
     public static Move aStar(GameState gs, Coord fromCoord, Coord toCoord, boolean searchAdjToo) {
