@@ -164,6 +164,7 @@ public class Board {
         for (int i = 1; i < snake.coords.size(); i++) {
             //check for repeated coord
             if (snake.coords.get(i).equals(snake.coords.get(i-1))) {
+                setCell(snake.coords.get(i), new Cell.SnakeCell(isUs, false));
                 i++;
                 continue;
             }
