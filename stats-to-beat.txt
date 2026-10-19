@@ -1,0 +1,5 @@
+snake                 wins  mean_pl  mean_len
+java                    13     1.57      58.1
+survivor                 8     2.05      48.3
+hungry                   0     2.81      31.7
+benchmark                0     3.57      16.4
