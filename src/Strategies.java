@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 
@@ -8,6 +9,12 @@ public class Strategies {
         if (gs.board().safeMovesFrom(gs.ourSnake().getHeadPos()).isEmpty()) {
             System.out.printf("log %d: no safe moves, going straight\n", Snake.turnNumber);
             return Move.STRAIGHT;
+        }
+
+        //be antagonistic if possible
+        Move antagMove = antagonist(gs);
+        if (antagMove != null) {
+            System.out.printf("log %d: making antagonistic move\n", Snake.turnNumber);
         }
 
         Move moveToApple = aStar(gs, gs.ourSnake().getHeadPos(), gs.applePos(), false);
@@ -27,6 +34,27 @@ public class Strategies {
 
     static boolean checkMoveSafety(GameState gs, Move m) {
         return aStar(gs, gs.board().coordFromMove(gs.ourSnake().getHeadPos(), m), gs.ourSnake().getTailPos(), true) != null;
+    }
+
+    public static Move antagonist(GameState gs) {
+        //check if there are snakes shorter than us that are closer than the apple
+        ArrayList<GameSnake> shortSnakes = new ArrayList<>();
+        for (GameSnake s: gs.otherSnakes()) {
+            if (s.length < gs.ourSnake().length && gs.board().distBetween(gs.ourSnake().getHeadPos(), s.getHeadPos()) < gs.board().distBetween(gs.ourSnake().getHeadPos(), gs.applePos())) {
+                shortSnakes.add(s);
+            }
+        }
+        shortSnakes.sort(new Comparator<GameSnake>() {
+            @Override
+            public int compare(GameSnake gameSnake, GameSnake t1) {
+                return Integer.compare(gameSnake.length, t1.length);
+            }
+        });
+        for (GameSnake s: shortSnakes) {
+            Move candidate = aStar(gs, gs.ourSnake().getHeadPos(), s.getHeadPos(), false);
+            if (candidate != null && checkMoveSafety(gs, candidate)) return candidate;
+        }
+        return null;
     }
 
     public static Move aStar(GameState gs, Coord fromCoord, Coord toCoord, boolean searchAdjToo) {
