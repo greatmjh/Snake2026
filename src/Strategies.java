@@ -112,10 +112,11 @@ public class Strategies {
         //find distance to closest snake within 10 of us
         int closestSnakeDist = Integer.MAX_VALUE;
         for (GameSnake s: otherSnakes) {
-            Coord otherHeadPos = s.getHeadPos();
-            int dist = board.distBetween(c, otherHeadPos);
-            if (dist < closestSnakeDist) closestSnakeDist = dist;
-
+            if (s.length >= ourLength) {
+                Coord otherHeadPos = s.getHeadPos();
+                int dist = board.distBetween(c, otherHeadPos);
+                if (dist < closestSnakeDist) closestSnakeDist = dist;
+            }
         }
 
         int risk = 10 - closestSnakeDist*closestSnakeDist/4;
