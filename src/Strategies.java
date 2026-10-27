@@ -90,9 +90,12 @@ public class Strategies {
 
         }
 
-        int risk = 10 - closestSnakeDist*closestSnakeDist/4;
-        if (risk < 1) risk = 1;
-        return risk;
+        return switch (closestSnakeDist) {
+            case 0 -> 100;
+            case 1 -> 20;
+            case 2 -> 8;
+            default -> 1;
+        };
     }
 
     public static Move claustrophobic(GameState gs, Coord fromCoord) {
