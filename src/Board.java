@@ -159,7 +159,7 @@ public class Board {
         }
     }
 
-    public void addSnake(GameSnake snake, boolean isUs) {
+    void addSnake(GameSnake snake, boolean isUs) {
         //Draw the snake
         for (int i = 1; i < snake.coords.size(); i++) {
             //check for repeated coord
