@@ -1,3 +1,4 @@
+Seeds: 1000..1020
 snake                 wins  mean_pl  mean_len
 java                    13     1.57      58.1
 survivor                 8     2.05      48.3
