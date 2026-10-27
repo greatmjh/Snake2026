@@ -94,6 +94,7 @@ public class Strategies {
             case 0 -> 100;
             case 1 -> 20;
             case 2 -> 8;
+            case 3 -> 2;
             default -> 1;
         };
     }
