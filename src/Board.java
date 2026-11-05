@@ -93,6 +93,19 @@ public class Board {
         return safeMoves;
     }
 
+    public ArrayList<Tuple<Move, Coord>> futureSafeMovesFrom(Coord fromCoord, int depth) {
+        //all possible moves
+        List<Tuple<Move, Coord>> possibleMoves = movesFrom(fromCoord);
+
+        //find safe moves
+        ArrayList<Tuple<Move, Coord>> safeMoves = new ArrayList<>();
+        for (Tuple<Move, Coord> a : possibleMoves) {
+            if (getCell(a.y()).getClass() == Cell.FreeCell.class) safeMoves.add(a);
+            if (getCell(a.y()).getClass() == Cell.SnakeCell.class && ((Cell.SnakeCell)(getCell(a.y()))).turnsUntilClear() < depth) safeMoves.add(a);
+        }
+        return safeMoves;
+    }
+
     public ArrayList<Tuple<Move, Coord>> doubleSafeMovesFrom(Coord fromCoord) {
         ArrayList<Tuple<Move, Coord>> doubleSafeMoves = new ArrayList<>();
         //find safe moves
