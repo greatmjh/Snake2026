@@ -56,7 +56,15 @@ public class Strategies {
             //add to finalised array
             finalised.add(head);
 
-            ArrayList<Tuple<Move, Coord>> adjacencies = gs.board().safeMovesFrom(head.location());
+            //find depth of head
+            int depth = 0;
+            AstarEntry curr = head;
+            while (curr.prev() != null) {
+                curr = curr.prev();
+                depth++;
+            }
+
+            ArrayList<Tuple<Move, Coord>> adjacencies = gs.board().futureSafeMovesFrom(head.location(), depth);
             for (Tuple<Move, Coord> x : adjacencies) {
                 Coord c = x.y();
                 int risk = calculateRisk(c, gs.otherSnakes(), gs.board(), gs.ourSnake().length);
