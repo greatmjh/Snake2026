@@ -144,35 +144,69 @@ public class Board {
         return result;
     }
 
-    void drawLine(Coord start, Coord end, Cell cellType) {
-        //Find min and max
-        int minX = Math.min(start.x, end.x);
-        int minY = Math.min(start.y, end.y);
-        int maxX = Math.max(start.x, end.x);
-        int maxY = Math.max(start.y, end.y);
-
-        //Fill the area
-        for (int i = minX; i <= maxX; i++) {
-            for (int j = minY; j <= maxY; j++) {
-                setCell(new Coord(i, j), cellType);
-            }
-        }
-    }
 
     void addSnake(GameSnake snake, boolean isUs) {
+        int runningTimeToClear = snake.length;
         //Draw the snake
         for (int i = 1; i < snake.coords.size(); i++) {
             //check for repeated coord
             if (snake.coords.get(i).equals(snake.coords.get(i-1))) {
-                setCell(snake.coords.get(i), new Cell.SnakeCell(isUs, false));
+                if (getCell(snake.coords.get(i)).getClass() == Cell.FreeCell.class) {
+                    setCell(snake.coords.get(i), new Cell.SnakeCell(isUs, false, runningTimeToClear));
+                    runningTimeToClear --;
+                }
                 i++;
-                continue;
+            } else {
+                //Start and end coords
+                Coord start = snake.coords.get(i-1);
+                Coord end = snake.coords.get(i);
+
+
+                //Which direction does this segment go?
+                if (start.x < end.x) {
+                    //left to right
+                    for (int x = start.x; x <= end.x; x++) {
+                        Coord c = new Coord(x, start.y);
+                        if (getCell(c).getClass() == Cell.FreeCell.class) {
+                            setCell(c, new Cell.SnakeCell(isUs, false, runningTimeToClear));
+                            runningTimeToClear --;
+                        }
+                    }
+                } else if (start.x > end.x) {
+                    //right to left
+                    for (int x = start.x; x >= end.x; x--) {
+                        Coord c = new Coord(x, start.y);
+                        if (getCell(c).getClass() == Cell.FreeCell.class) {
+                            setCell(c, new Cell.SnakeCell(isUs, false, runningTimeToClear));
+                            runningTimeToClear --;
+                        }
+                    }
+                } else if (start.y < end.y) {
+                    //up to down
+                    for (int y = start.y; y <= end.y; y++) {
+                        Coord c = new Coord(start.x, y);
+                        if (getCell(c).getClass() == Cell.FreeCell.class) {
+                            setCell(c, new Cell.SnakeCell(isUs, false, runningTimeToClear));
+                            runningTimeToClear --;
+                        }
+                    }
+                } else if (start.y > end.y) {
+                    for (int y = start.y; y >= end.y; y--) {
+                        Coord c = new Coord(start.x, y);
+                        if (getCell(c).getClass() == Cell.FreeCell.class) {
+                            setCell(c, new Cell.SnakeCell(isUs, false, runningTimeToClear));
+                            runningTimeToClear --;
+                        }
+                    }
+                } else {
+                    throw new RuntimeException("Invalid snake coordinate pairs");
+                }
             }
-            drawLine(snake.coords.get(i-1), snake.coords.get(i), new Cell.SnakeCell(isUs, false));
+
         }
 
         //Mark the head
-        setCell(snake.getHeadPos(), new Cell.SnakeCell(isUs, true));
+        setCell(snake.getHeadPos(), new Cell.SnakeCell(isUs, true, snake.length));
     }
 
     static int shortestWrapDistance(int a, int b, int k) {

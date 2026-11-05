@@ -7,8 +7,9 @@ public sealed interface Cell {
             else return ' ';
         }
     }
-    record SnakeCell(boolean isUs, boolean isHead) implements Cell {
+    record SnakeCell(boolean isUs, boolean isHead, int turnsUntilClear) implements Cell {
         public char toChar() {
+
             if (isHead && isUs) {
                 return '$';
             }
