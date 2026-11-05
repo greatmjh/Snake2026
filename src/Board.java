@@ -22,15 +22,15 @@ public class Board {
     }
 
     //full initialiser
-    public Board(int width, int height, Coord applePos, GameSnake us, GameSnake[] others) {
+    public Board(int width, int height, Coord applePos, GameSnake us, GameSnake[] others, int timeSinceLastApple) {
         this(width, height);
         //draw our snake
-        addSnake(us, true);
+        addSnake(us, true, timeSinceLastApple);
 
         //draw other snakes
         for (GameSnake other : others) {
             if (other.alive) {
-                addSnake(other, false);
+                addSnake(other, false, timeSinceLastApple);
             }
         }
 
@@ -158,8 +158,11 @@ public class Board {
     }
 
 
-    void addSnake(GameSnake snake, boolean isUs) {
+    void addSnake(GameSnake snake, boolean isUs, int timeSinceLastApple) {
         int runningTimeToClear = snake.length;
+        if (isUs && timeSinceLastApple < 5) {
+            runningTimeToClear += (5 - timeSinceLastApple);
+        }
         //Draw the snake
         for (int i = 1; i < snake.coords.size(); i++) {
             //check for repeated coord

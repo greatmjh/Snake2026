@@ -12,6 +12,9 @@ public class Snake {
         int width = Integer.parseInt(init[1]);
         int height = Integer.parseInt(init[2]);
 
+        Coord lastApplePos = new Coord(1000, 1000);
+        int timeSinceLastApple = 10; //set high enough that the initial state won't be affected
+
 
         String line;
         while ((line = in.readLine()) != null) {
@@ -45,8 +48,18 @@ public class Snake {
                 }
             }
 
-            Board board = new Board(width, height, applePos, ourSnake, otherSnakes);
+            //determine if apple has been eaten
+            if (!applePos.equals(lastApplePos)) {
+                //determine if it was us who ate the apple
+                if (new Board(width, height).distBetween(ourSnake.getHeadPos(), lastApplePos) <= 1) {
+                    timeSinceLastApple = 0;
+                }
+                lastApplePos = applePos;
+            }
+            timeSinceLastApple ++;
+            Board board = new Board(width, height, applePos, ourSnake, otherSnakes, timeSinceLastApple);
             GameState gs = new GameState(board, ourSnake, otherSnakes, applePos);
+
 
             try {
                 Move move = Strategies.adaptive(gs);

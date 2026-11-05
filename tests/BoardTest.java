@@ -38,7 +38,7 @@ class BoardTest {
     @org.junit.jupiter.api.Test
     void safeMovesFrom() {
         GameSnake testSnake = new GameSnake("alive 5 0 4,5 4,5 4,0 4,0 0,0 0,2");
-        Board b = new Board(5, 6, new Coord(1,1), testSnake, new GameSnake[0]);
+        Board b = new Board(5, 6, new Coord(1,1), testSnake, new GameSnake[0],100);
         Coord start = new Coord(4, 1);
         List<Tuple<Move, Coord>> expected = List.of(
                 new Tuple<>(Move.DOWN, new Coord(4, 2)),
@@ -51,7 +51,7 @@ class BoardTest {
     void doubleSafeMovesFrom() {
         GameSnake testSnake = new GameSnake("alive 5 0 4,5 4,5 4,0 4,0 0,0 0,2");
         GameSnake testSnake2 = new GameSnake("alive 2 0 1,2 2,2");
-        Board b = new Board(5, 6, new Coord(1,1), testSnake, new GameSnake[]{testSnake2});
+        Board b = new Board(5, 6, new Coord(1,1), testSnake, new GameSnake[]{testSnake2},100);
         Coord start = new Coord(4, 1);
         List<Tuple<Move, Coord>> expected = List.of(
                 new Tuple<>(Move.LEFT, new Coord(3, 1)));
@@ -63,7 +63,7 @@ class BoardTest {
     void reachableDoubleSafeFrom() {
         GameSnake testSnake = new GameSnake("alive 5 0 4,5 4,5 4,0 4,0 0,0 0,2");
         GameSnake testSnake2 = new GameSnake("alive 2 0 2,1 2,2");
-        Board b = new Board(5, 6, new Coord(1,1), testSnake, new GameSnake[]{testSnake2});
+        Board b = new Board(5, 6, new Coord(1,1), testSnake, new GameSnake[]{testSnake2}, 100);
         Coord start = new Coord(4, 4);
         assertEquals(10, b.reachableDoubleSafeFrom(start, 1000).size());
     }

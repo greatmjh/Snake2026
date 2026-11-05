@@ -2,7 +2,7 @@ Seeds: 1000..1020
 
 Seeds: 2001..2100
 snake                 wins  mean_pl  mean_len
-java                    77     1.33      67.3
-survivor                16     2.22      50.8
-hungry                   7     2.83      27.1
-benchmark                2     3.59      18.2
+java                    82     1.28      68.1
+survivor                13     2.17      45.0
+hungry                   5     2.86      23.6
+benchmark                0     3.66      17.3
