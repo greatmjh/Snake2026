@@ -18,7 +18,7 @@ public class Strategies {
         }
         //apple isn't safely reachable, try chasing our tail
         Move chaseTail = aStar(gs, gs.ourSnake().getHeadPos(), gs.ourSnake().getTailPos(), true);
-        if (chaseTail != null && checkMoveSafety(gs, chaseTail)) {
+        if (chaseTail != null) {
             System.out.printf("log %d: apple not safely reachable, chasing tail\n", Snake.turnNumber);
             return chaseTail;
         }
@@ -44,13 +44,7 @@ public class Strategies {
 
     public static Move aStar(GameState gs, Coord fromCoord, Coord toCoord, boolean searchAdjToo) {
         //working queue
-        PriorityQuCourse Dashboard
-Fall 2026
-STAT2012A
-STAT2012A - Introduction to Mathematical Statistics II-2026-SM2
-6 assignments
-Add a course
-Summer 2026eue<AstarEntry> pq = new PriorityQueue<>();
+        PriorityQueue<AstarEntry> pq = new PriorityQueue<>();
 
         //finalised nodes
         HashSet<AstarEntry> finalised = new HashSet<>();
@@ -142,7 +136,7 @@ Summer 2026eue<AstarEntry> pq = new PriorityQueue<>();
         int bestSpace = 0;
         Move bestMove = Move.STRAIGHT;
         for (Tuple<Move, Coord> x: safeMoves) {
-            int currSpace = gs.board().reachableDoubleSafeFrom(x.y(), 500).size();
+            int currSpace = gs.board().reachableDoubleSafeFrom(x.y(), 120).size();
             if (currSpace > bestSpace) {
                 bestMove = x.x();
             }
