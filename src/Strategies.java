@@ -56,16 +56,19 @@ public class Strategies {
             //add to finalised array
             finalised.add(head);
 
-            //find depth of head
+            //find depth of head and note all squares we've used
             int depth = 0;
+            HashSet<Coord> treaded = new HashSet<>();
             AstarEntry curr = head;
             while (curr.prev() != null) {
+                treaded.add(curr.location());
                 curr = curr.prev();
                 depth++;
             }
 
             ArrayList<Tuple<Move, Coord>> adjacencies = gs.board().futureSafeMovesFrom(head.location(), depth);
             for (Tuple<Move, Coord> x : adjacencies) {
+                if (treaded.contains(x.y())) continue; //don't consider squares we used to get here safe
                 Coord c = x.y();
                 int risk = calculateRisk(c, gs.otherSnakes(), gs.board(), gs.ourSnake().length);
                 int dist = gs.board().distBetween(c, toCoord);
