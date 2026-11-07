@@ -23,4 +23,21 @@ public class DbgUtils {
             System.out.println();
         }
     }
+
+    public static void printPath(AstarEntry head, Coord applePos, int w, int h) {
+        HashSet<Coord> treaded = new HashSet<>();
+        AstarEntry curr = head;
+        while (curr.prev() != null) {
+            treaded.add(curr.location());
+            curr = curr.prev();
+        }
+        for (int i = 0; i < h; i++) {
+            for (int j = 0; j < w; j++) {
+                Coord c = new Coord(j, i);
+                if (treaded.contains(c)) System.out.print("* ");
+                else System.out.print("  ");
+            }
+            System.out.println();
+        }
+    }
 }

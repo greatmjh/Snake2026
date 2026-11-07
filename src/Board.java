@@ -230,7 +230,7 @@ public class Board {
         //wrap through the right side of the line
         int rightWrap = Math.abs(a - (b + k));
         //wrap through left side of the line
-        int leftWrap = Math.abs(a - (k - b));
+        int leftWrap = Math.abs(b - (a + k));
 
         return Math.min(Math.min(directDist, rightWrap), leftWrap);
     }

@@ -1,6 +1,7 @@
 //Competition entry point -- handles very basic input parsing
 
 import java.io.*;
+import java.rmi.RemoteException;
 import java.util.*;
 
 public class Snake {

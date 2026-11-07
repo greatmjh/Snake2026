@@ -10,6 +10,8 @@ class BoardTest {
         assertEquals(2, b.distBetween(new Coord(0, 2), new Coord(3, 4))); //wrap x-axis
         assertEquals(2, b.distBetween(new Coord(2, 0), new Coord(1, 5))); //wrap y-axis
         assertEquals(2, b.distBetween(new Coord(0, 0), new Coord(4, 5))); //wrap corner
+        Board b2 = new Board(35, 35);
+        assertNotEquals(1, b.distBetween(new Coord(25, 22), new Coord(10, 21))); //real life test case
     }
 
     @org.junit.jupiter.api.Test
