@@ -19,16 +19,17 @@ public class Strategies {
 
         Move moveToApple = aStar(gs, gs.ourSnake().getHeadPos(), gs.applePos(), false);
         if (moveToApple != null && checkMoveSafety(gs, moveToApple)) {
+            System.out.printf("log %d: direct astar to apple\n", Snake.turnNumber);
             return moveToApple;
         }
         //apple isn't safely reachable, try chasing our tail
-        System.out.printf("log %d: apple not safely reachable, chasing tail\n", Snake.turnNumber);
         Move chaseTail = aStar(gs, gs.ourSnake().getHeadPos(), gs.ourSnake().getTailPos(), true);
         if (chaseTail != null && checkMoveSafety(gs, chaseTail)) {
+            System.out.printf("log %d: apple not safely reachable, chasing tail\n", Snake.turnNumber);
             return chaseTail;
         }
         //chasing tail isn't viable, fallback to claustrophobic
-        System.out.printf("log %d: tail safely reachable, falling back to claustrophobic\n", Snake.turnNumber);
+        System.out.printf("log %d: tail not safely reachable, falling back to claustrophobic\n", Snake.turnNumber);
         return claustrophobic(gs, gs.ourSnake().getHeadPos());
     }
 
