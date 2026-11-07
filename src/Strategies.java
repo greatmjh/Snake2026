@@ -4,6 +4,13 @@ import java.util.PriorityQueue;
 
 public class Strategies {
     public static Move adaptive(GameState gs) {
+        //simulate one move for all the other snakes
+        for (GameSnake s: gs.otherSnakes()) {
+            Move candidateMove = aStar(gs, s.getHeadPos(), gs.applePos(), false);
+            if (candidateMove == null) continue;
+            gs.board().setCell(gs.board().coordFromMove(s.getHeadPos(), candidateMove), new Cell.SnakeCell(false, true, s.length + 1));
+        }
+
         //check if there is anything safe
         if (gs.board().safeMovesFrom(gs.ourSnake().getHeadPos()).isEmpty()) {
             System.out.printf("log %d: no safe moves, going straight\n", Snake.turnNumber);
