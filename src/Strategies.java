@@ -28,12 +28,29 @@ public class Strategies {
     }
 
     static boolean checkMoveSafety(GameState gs, Move m) {
-        return aStar(gs, gs.board().coordFromMove(gs.ourSnake().getHeadPos(), m), gs.ourSnake().getTailPos(), true) != null;
+        return aStar(gs, gs.board().coordFromMove(gs.ourSnake().getHeadPos(), m), gs.ourSnake().getTailPos(), true) != null &&
+                contestedAppleCheck(gs, m);
+    }
+
+    //Checks if we could have a head collision when eating an apple
+    static boolean contestedAppleCheck(GameState gs, Move m) {
+        Coord c = gs.board().coordFromMove(gs.ourSnake().getHeadPos(), m);
+        if (!c.equals(gs.applePos())) return true;
+        for (GameSnake s: gs.otherSnakes()) {
+            if (gs.board().distBetween(c, s.getHeadPos()) <= 1 && s.length >= gs.ourSnake().length) return false;
+        }
+        return true;
     }
 
     public static Move aStar(GameState gs, Coord fromCoord, Coord toCoord, boolean searchAdjToo) {
         //working queue
-        PriorityQueue<AstarEntry> pq = new PriorityQueue<>();
+        PriorityQuCourse Dashboard
+Fall 2026
+STAT2012A
+STAT2012A - Introduction to Mathematical Statistics II-2026-SM2
+6 assignments
+Add a course
+Summer 2026eue<AstarEntry> pq = new PriorityQueue<>();
 
         //finalised nodes
         HashSet<AstarEntry> finalised = new HashSet<>();
