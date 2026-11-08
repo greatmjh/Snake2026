@@ -16,8 +16,18 @@ public class Strategies {
         HashSet<Coord> unsafeCells = new HashSet<>();
         if (appleUnsafe) unsafeCells.add(gs.applePos());
 
+        //presimulate other longer snakes that are close to the apple
+        for (GameSnake s: gs.otherSnakes()) {
+            if (gs.board().distBetween(s.getHeadPos(), gs.applePos()) < 10 && s.length > gs.ourSnake().length) { //only predict if its close and longer
+                Move predictedMove = aStar(gs, s.getHeadPos(), gs.applePos(), false, new HashSet<>(), false);
+                if (predictedMove == null) continue;
+                Coord predictedNewHeadPos = gs.board().coordFromMove(s.getHeadPos(), predictedMove);
+                unsafeCells.add(predictedNewHeadPos);
+            }
+        }
+
         if (!appleUnsafe) { //only try to navigate to the apple if we won't have a head-head eating it
-            Move moveToApple = aStar(gs, gs.ourSnake().getHeadPos(), gs.applePos(), false, unsafeCells);
+            Move moveToApple = aStar(gs, gs.ourSnake().getHeadPos(), gs.applePos(), false, unsafeCells, true);
             if (moveToApple != null && checkMoveSafety(gs, moveToApple, unsafeCells)) {
                 System.out.printf("log %d: direct astar to apple\n", Snake.turnNumber);
                 return moveToApple;
@@ -25,7 +35,7 @@ public class Strategies {
         }
 
         //apple isn't safely reachable, try chasing our tail
-        Move chaseTail = aStar(gs, gs.ourSnake().getHeadPos(), gs.ourSnake().getTailPos(), true, unsafeCells);
+        Move chaseTail = aStar(gs, gs.ourSnake().getHeadPos(), gs.ourSnake().getTailPos(), true, unsafeCells, true);
         if (chaseTail != null) {
             System.out.printf("log %d: apple not safely reachable, chasing tail\n", Snake.turnNumber);
             return chaseTail;
@@ -36,7 +46,7 @@ public class Strategies {
     }
 
     static boolean checkMoveSafety(GameState gs, Move m, HashSet<Coord> unsafeCells) {
-        return aStar(gs, gs.board().coordFromMove(gs.ourSnake().getHeadPos(), m), gs.ourSnake().getTailPos(), true, unsafeCells) != null;
+        return aStar(gs, gs.board().coordFromMove(gs.ourSnake().getHeadPos(), m), gs.ourSnake().getTailPos(), true, unsafeCells, false) != null;
     }
 
     //Checks if we could have a head collision when eating an apple
@@ -48,7 +58,7 @@ public class Strategies {
         return false;
     }
 
-    public static Move aStar(GameState gs, Coord fromCoord, Coord toCoord, boolean searchAdjToo, HashSet<Coord> blockedCoords) {
+    public static Move aStar(GameState gs, Coord fromCoord, Coord toCoord, boolean searchAdjToo, HashSet<Coord> blockedCoords, boolean calcRisks) {
         //working queue
         PriorityQueue<AstarEntry> pq = new PriorityQueue<>();
 
@@ -89,7 +99,8 @@ public class Strategies {
             for (Tuple<Move, Coord> x : adjacencies) {
                 if (treaded.contains(x.y()) || blockedCoords.contains(x.y())) continue; //don't consider squares we used to get here safe
                 Coord c = x.y();
-                int risk = calculateRisk(c, gs.otherSnakes(), gs.board(), gs.ourSnake().length);
+                int risk = 1;
+                if (calcRisks) risk = calculateRisk(c, gs.otherSnakes(), gs.board(), gs.ourSnake().length);
                 int dist = gs.board().distBetween(c, toCoord);
                 AstarEntry newEntry = new AstarEntry(c, head, head.cumulativeCost() + risk, dist, x.x());
                 pq.add(newEntry);
@@ -135,7 +146,7 @@ public class Strategies {
         //find moves where we can actually reach our tail
         ArrayList<Tuple<Move, Coord>> tailReachingMoves = new ArrayList<>();
         for (Tuple<Move, Coord> a : safeMoves) {
-            if (aStar(gs, a.y(), gs.ourSnake().getTailPos(), true, unsafeCells) != null) tailReachingMoves.add(a);
+            if (aStar(gs, a.y(), gs.ourSnake().getTailPos(), true, unsafeCells, false) != null) tailReachingMoves.add(a);
         }
         if (!tailReachingMoves.isEmpty()) safeMoves = tailReachingMoves;
 
